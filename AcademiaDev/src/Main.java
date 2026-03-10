@@ -1,5 +1,7 @@
+import Courses.Course;
 import Courses.CourseCatalog;
 import Courses.DifficultyLevel;
+import Courses.EnrollmentException;
 import Support.SupportTicket;
 import Users.Admin;
 import Users.Student;
@@ -31,9 +33,9 @@ public class Main {
         do {
             int escolha;
 
-            // ==========================================
-            // ESTADO 1: USUÁRIO NÃO LOGADO (Visitante)
-            // ==========================================
+
+            //1: USUÁRIO NÃO LOGADO (Visitante)
+
             if (usuarioLogado == null) {
                 MenuActionsList.mostrarMenuPrincipal();
                 escolha = lerOpcao(scanner);
@@ -64,9 +66,9 @@ public class Main {
                         System.out.println("Opção inválida!");
                 }
             }
-            // ==========================================
-            // ESTADO 2: LOGADO COMO ADMINISTRADOR
-            // ==========================================
+
+            //2: LOGADO COMO ADMINISTRADOR
+
             else if (usuarioLogado instanceof Admin) {
                 MenuActionsList.mostrarMenuAdmin();
                 escolha = lerOpcao(scanner);
@@ -100,9 +102,9 @@ public class Main {
                         System.out.println("Opção inválida!");
                 }
             }
-            // ==========================================
-            // ESTADO 3: LOGADO COMO ALUNO (Student)
-            // ==========================================
+
+            //3: LOGADO COMO ALUNO (Student)
+
             else if (usuarioLogado instanceof Student) {
                 MenuActionsList.mostrarMenuAluno();
                 escolha = lerOpcao(scanner);
@@ -115,15 +117,31 @@ public class Main {
 
                 switch (escolha) {
                     case 1:
-                        // Lógica de Matrícula (Puxando os métodos que você já fez)
-                        System.out.print("Digite o título do curso exato que deseja matricular: ");
+                        // 1. Mostra o catálogo ANTES de pedir o nome!
+                        System.out.println("\n--- Catálogo de Cursos Disponíveis ---");
+                        MenuActionsList.ListarCursos();
+                        System.out.println("--------------------------------------");
+
+                        // 2. Agora sim, pede o nome do curso
+                        System.out.print("\nDigite o título exato do curso que deseja se matricular: ");
                         String tituloCurso = scanner.nextLine();
+
                         try {
-                            // Student alunoLogado = (Student) usuarioLogado;
-                            // alunoLogado.matricular(catalogo.buscarCurso(tituloCurso));
-                            System.out.println("Funcionalidade de matrícula em construção no menu!");
+                            // 3. Busca o curso no catálogo
+                            Course cursoDesejado = catalogo.buscarCurso(tituloCurso);
+
+                            if (cursoDesejado == null) {
+                                System.out.println("Curso não encontrado no catálogo. Verifique o nome e tente novamente.");
+                            } else {
+                                // 4. Efetiva a matrícula usando a lógica blindada da sua classe Student
+                                Student alunoLogado = (Student) usuarioLogado;
+                                alunoLogado.matricular(cursoDesejado);
+                                System.out.println("Matrícula realizada com sucesso no curso: " + cursoDesejado.getTitle());
+                            }
+                        } catch (EnrollmentException e) {
+                            System.out.println("Erro na matrícula: " + e.getMessage());
                         } catch (Exception e) {
-                            System.out.println("Erro: " + e.getMessage());
+                            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
                         }
                         break;
                     case 2:

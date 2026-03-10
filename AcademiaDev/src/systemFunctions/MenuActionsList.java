@@ -26,15 +26,10 @@ public class    MenuActionsList {
         scanner = sc;
     }
 
-    // Alterado para retornar o User para o Main saber quem logou
     public static User Login(String email) {
         // Cria a ação com os dados
         Login loginAction = new Login(email, usuarios);
-
-        // Executa a regra de negócio
         loginAction.execute();
-
-        // Retorna o usuário logado (ou null se falhou)
         return loginAction.getUsuarioLogado();
     }
 
@@ -60,13 +55,12 @@ public class    MenuActionsList {
         System.out.println("Ticket aberto e adicionado à fila de atendimento!");
     }
 
-    // NOVO: Processamento da fila (First-In, First-Out)
     public static void AtenderTicketSuporte() {
         if (filaDeTicketSuporte.isEmpty()) {
             System.out.println("A fila de suporte está vazia. Excelente trabalho!");
             return;
         }
-        // O método poll() pega e REMOVE o primeiro da fila (FIFO)
+        // O metodo poll() pega e REMOVE o primeiro da fila (FIFO)
         SupportTicket ticketAtendido = filaDeTicketSuporte.poll();
         System.out.println("\n--- Atendendo Ticket ---");
         System.out.println("De: " + ticketAtendido.getUsuarioSolicitante().getName());
@@ -102,7 +96,11 @@ public class    MenuActionsList {
     public static void mostrarMenuAluno() {
         System.out.println("\n=== PAINEL DO ALUNO ===");
         System.out.println("1 - Matricular-se em um Curso");
-        System.out.println("2 - Abrir Ticket de Suporte");
+        System.out.println("2 - Consultar minhas Matrículas e Progresso");
+        System.out.println("3 - Atualizar Progresso de um Curso");
+        System.out.println("4 - Cancelar Matrícula");
+        System.out.println("5 - Abrir Ticket de Suporte");
+        System.out.println("6 - Listar Catálogo de Cursos");
         System.out.println("0 - Logout (Voltar)");
     }
 }

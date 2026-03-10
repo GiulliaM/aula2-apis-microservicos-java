@@ -30,9 +30,7 @@ public class Main {
         do {
             int escolha;
 
-            // ==========================================
-            // ESTADO 1: USUÁRIO NÃO LOGADO (Visitante)
-            // ==========================================
+            //usuario como visitante
             if (usuarioLogado == null) {
                 MenuActionsList.mostrarMenuPrincipal();
                 escolha = lerOpcao(scanner);
@@ -63,9 +61,8 @@ public class Main {
                         System.out.println("Opção inválida!");
                 }
             }
-            // ==========================================
-            // ESTADO 2: LOGADO COMO ADMINISTRADOR
-            // ==========================================
+
+            //usuario logado como administrador
             else if (usuarioLogado instanceof Admin) {
                 MenuActionsList.mostrarMenuAdmin();
                 escolha = lerOpcao(scanner);
@@ -152,9 +149,8 @@ public class Main {
                         System.out.println("Opção inválida!");
                 }
             }
-            // ==========================================
-            // ESTADO 3: LOGADO COMO ALUNO (Student)
-            // ==========================================
+
+            //usuario logado como estudante
             else if (usuarioLogado instanceof Student) {
                 Student alunoLogado = (Student) usuarioLogado;
                 MenuActionsList.mostrarMenuAluno();
@@ -188,7 +184,7 @@ public class Main {
                         }
                         break;
                     }
-                    case 2: { // CONSULTAR MATRÍCULAS E PROGRESSO
+                    case 2: {
                         System.out.println("\n--- Minhas Matrículas ---");
                         List<Enrollment> minhasMatriculas = alunoLogado.getListaDeMatriculasAtuais();
 
@@ -201,7 +197,7 @@ public class Main {
                         }
                         break;
                     }
-                    case 3: { // ATUALIZAR PROGRESSO
+                    case 3: {
                         System.out.print("Digite o título do curso que deseja atualizar o progresso: ");
                         String tituloAtualizar = scanner.nextLine();
 
@@ -230,7 +226,7 @@ public class Main {
                         }
                         break;
                     }
-                    case 4: { // CANCELAR MATRÍCULA
+                    case 4: {
                         System.out.print("Digite o título do curso que deseja cancelar a matrícula: ");
                         String tituloCancelar = scanner.nextLine();
 
@@ -245,14 +241,14 @@ public class Main {
                         }
                         break;
                     }
-                    case 5: { // ABRIR TICKET
+                    case 5: {
                         System.out.print("Título do Ticket: ");
                         String titulo = scanner.nextLine();
                         System.out.print("Mensagem: ");
                         MenuActionsList.AbrirTicket(alunoLogado.getEmail(), titulo, scanner.nextLine());
                         break;
                     }
-                    case 6: { // LISTAR CATÁLOGO
+                    case 6: {
                         System.out.println("\n--- Catálogo de Cursos ---");
                         MenuActionsList.ListarCursos();
                         break;
@@ -264,7 +260,6 @@ public class Main {
 
         } while (true);
 
-        // O fechamento do scanner foi movido para fora do laço para não dar erro (unreachable statement)
     }
 
     // Método auxiliar para evitar repetição de código na leitura do scanner

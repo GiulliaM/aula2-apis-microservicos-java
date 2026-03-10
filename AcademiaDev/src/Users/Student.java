@@ -42,7 +42,7 @@ public class Student extends User {
         this.listaDeMatriculasAtuais.add(novaMatricula);
     }
 
-    // Getters e Setters
+
     public List<Enrollment> getListaDeMatriculasAtuais() {
         return listaDeMatriculasAtuais;
     }

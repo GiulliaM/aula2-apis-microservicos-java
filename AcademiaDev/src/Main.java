@@ -117,17 +117,17 @@ public class Main {
 
                 switch (escolha) {
                     case 1:
-                        // 1. Mostra o catálogo ANTES de pedir o nome!
+                        // 1. mostra catalogo de cursos antes da matricula
                         System.out.println("\n--- Catálogo de Cursos Disponíveis ---");
                         MenuActionsList.ListarCursos();
                         System.out.println("--------------------------------------");
 
-                        // 2. Agora sim, pede o nome do curso
+                        // 2. pede nome do curso para matricula
                         System.out.print("\nDigite o título exato do curso que deseja se matricular: ");
                         String tituloCurso = scanner.nextLine();
 
                         try {
-                            // 3. Busca o curso no catálogo
+                            // 3. busca cursos na catalogo
                             Course cursoDesejado = catalogo.buscarCurso(tituloCurso);
 
                             if (cursoDesejado == null) {

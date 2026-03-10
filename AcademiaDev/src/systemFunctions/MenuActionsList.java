@@ -94,6 +94,8 @@ public class    MenuActionsList {
         System.out.println("1 - Atender Ticket de Suporte (Fila FIFO)");
         System.out.println("2 - Gerar Relatórios da Plataforma");
         System.out.println("3 - Exportar Lista de Cursos (CSV)");
+        System.out.println("4 - Gerenciar Status de Cursos");
+        System.out.println("5 - Gerenciar Planos de Alunos");
         System.out.println("0 - Logout (Voltar)");
     }
 

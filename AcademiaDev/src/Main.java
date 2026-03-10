@@ -1,7 +1,4 @@
-import Courses.Course;
-import Courses.CourseCatalog;
-import Courses.DifficultyLevel;
-import Courses.EnrollmentException;
+import Courses.*;
 import Support.SupportTicket;
 import Users.Admin;
 import Users.Student;
@@ -33,9 +30,9 @@ public class Main {
         do {
             int escolha;
 
-
-            //1: USUÁRIO NÃO LOGADO (Visitante)
-
+            // ==========================================
+            // ESTADO 1: USUÁRIO NÃO LOGADO (Visitante)
+            // ==========================================
             if (usuarioLogado == null) {
                 MenuActionsList.mostrarMenuPrincipal();
                 escolha = lerOpcao(scanner);
@@ -66,9 +63,9 @@ public class Main {
                         System.out.println("Opção inválida!");
                 }
             }
-
-            //2: LOGADO COMO ADMINISTRADOR
-
+            // ==========================================
+            // ESTADO 2: LOGADO COMO ADMINISTRADOR
+            // ==========================================
             else if (usuarioLogado instanceof Admin) {
                 MenuActionsList.mostrarMenuAdmin();
                 escolha = lerOpcao(scanner);
@@ -84,28 +81,82 @@ public class Main {
                         MenuActionsList.AtenderTicketSuporte();
                         break;
                     case 2:
-                        // Chamando os relatórios da Stream API
                         System.out.println("\nGERANDO RELATÓRIOS DA PLATAFORMA...");
                         ReportService.listarCursosPorDificuldade(catalogo.getTodosCursos(), DifficultyLevel.ADVANCED);
                         ReportService.listarInstrutoresAtivos(catalogo.getTodosCursos());
                         ReportService.agruparAlunosPorPlano(usuarios.values());
                         ReportService.exibirMediaGeralProgresso(usuarios.values());
+
+                        // Imprimindo o Optional<Student> do aluno com mais matrículas
+                        Optional<Student> topAluno = ReportService.getAlunoComMaisMatriculas(usuarios.values());
+                        if (topAluno.isPresent()) {
+                            Student aluno = topAluno.get();
+                            System.out.println("\n--- Top Aluno ---\nO aluno com mais matrículas é: " + aluno.getName() + " (" + aluno.getListaDeMatriculasAtuais().size() + " matrículas)");
+                        } else {
+                            System.out.println("\n--- Top Aluno ---\nAinda não há alunos matriculados na plataforma.");
+                        }
                         break;
                     case 3:
-                        // Exportando dados com Reflection
                         System.out.println("\nGerando CSV de Cursos...");
-                        List<String> colunas = Arrays.asList("title", "instructorName", "difficultyLevel");
+                        List<String> colunas = Arrays.asList("title", "instructorName", "difficultyLevel", "status");
                         String csv = GenericCsvExporter.exportarParaCsv(new ArrayList<>(catalogo.getTodosCursos()), colunas);
                         System.out.println(csv);
+                        break;
+                    case 4:
+                        System.out.print("Digite o título exato do curso para alterar o status: ");
+                        String tituloCurso = scanner.nextLine();
+                        Course curso = catalogo.buscarCurso(tituloCurso);
+
+                        if (curso == null) {
+                            System.out.println("Curso não encontrado.");
+                        } else {
+                            System.out.println("Status atual: " + curso.getStatus());
+                            System.out.print("Deseja alterar para qual status? (1 - ACTIVE / 2 - INACTIVE): ");
+                            int opStatus = lerOpcao(scanner);
+                            if (opStatus == 1) {
+                                curso.setStatus(CourseStatus.ACTIVE);
+                                System.out.println("Curso ativado com sucesso!");
+                            } else if (opStatus == 2) {
+                                curso.setStatus(CourseStatus.INACTIVE);
+                                System.out.println("Curso inativado com sucesso!");
+                            } else {
+                                System.out.println("Opção inválida.");
+                            }
+                        }
+                        break;
+                    case 5:
+                        System.out.print("Digite o email do aluno para alterar o plano: ");
+                        String emailAluno = scanner.nextLine();
+                        User usuarioEncontrado = usuarios.get(emailAluno);
+
+                        if (usuarioEncontrado instanceof Student) {
+                            Student alunoParaAlterar = (Student) usuarioEncontrado;
+                            System.out.println("Plano atual do aluno: " + alunoParaAlterar.getPlano().getClass().getSimpleName());
+                            System.out.print("Deseja alterar para qual plano? (1 - Basic / 2 - Premium): ");
+                            int opPlano = lerOpcao(scanner);
+
+                            if (opPlano == 1) {
+                                alunoParaAlterar.setPlano(new BasicPlan());
+                                System.out.println("Plano alterado para BasicPlan com sucesso!");
+                            } else if (opPlano == 2) {
+                                alunoParaAlterar.setPlano(new PremiumPlan());
+                                System.out.println("Plano alterado para PremiumPlan com sucesso!");
+                            } else {
+                                System.out.println("Opção inválida.");
+                            }
+                        } else {
+                            System.out.println("Aluno não encontrado com este email.");
+                        }
                         break;
                     default:
                         System.out.println("Opção inválida!");
                 }
             }
-
-            //3: LOGADO COMO ALUNO (Student)
-
+            // ==========================================
+            // ESTADO 3: LOGADO COMO ALUNO (Student)
+            // ==========================================
             else if (usuarioLogado instanceof Student) {
+                Student alunoLogado = (Student) usuarioLogado;
                 MenuActionsList.mostrarMenuAluno();
                 escolha = lerOpcao(scanner);
 
@@ -116,40 +167,96 @@ public class Main {
                 }
 
                 switch (escolha) {
-                    case 1:
-                        // 1. mostra catalogo de cursos antes da matricula
+                    case 1: { // MATRICULAR-SE
                         System.out.println("\n--- Catálogo de Cursos Disponíveis ---");
                         MenuActionsList.ListarCursos();
                         System.out.println("--------------------------------------");
 
-                        // 2. pede nome do curso para matricula
                         System.out.print("\nDigite o título exato do curso que deseja se matricular: ");
                         String tituloCurso = scanner.nextLine();
 
                         try {
-                            // 3. busca cursos na catalogo
                             Course cursoDesejado = catalogo.buscarCurso(tituloCurso);
-
                             if (cursoDesejado == null) {
-                                System.out.println("Curso não encontrado no catálogo. Verifique o nome e tente novamente.");
+                                System.out.println("Curso não encontrado no catálogo.");
                             } else {
-                                // 4. Efetiva a matrícula usando a lógica blindada da sua classe Student
-                                Student alunoLogado = (Student) usuarioLogado;
                                 alunoLogado.matricular(cursoDesejado);
                                 System.out.println("Matrícula realizada com sucesso no curso: " + cursoDesejado.getTitle());
                             }
-                        } catch (EnrollmentException e) {
-                            System.out.println("Erro na matrícula: " + e.getMessage());
                         } catch (Exception e) {
-                            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+                            System.out.println("Erro na matrícula: " + e.getMessage());
                         }
                         break;
-                    case 2:
+                    }
+                    case 2: { // CONSULTAR MATRÍCULAS E PROGRESSO
+                        System.out.println("\n--- Minhas Matrículas ---");
+                        List<Enrollment> minhasMatriculas = alunoLogado.getListaDeMatriculasAtuais();
+
+                        if (minhasMatriculas.isEmpty()) {
+                            System.out.println("Você ainda não está matriculado em nenhum curso.");
+                        } else {
+                            minhasMatriculas.forEach(m ->
+                                    System.out.println("- " + m.getCursoMatriculado().getTitle() + " | Progresso: " + m.getProgress() + "%")
+                            );
+                        }
+                        break;
+                    }
+                    case 3: { // ATUALIZAR PROGRESSO
+                        System.out.print("Digite o título do curso que deseja atualizar o progresso: ");
+                        String tituloAtualizar = scanner.nextLine();
+
+                        Optional<Enrollment> matriculaEncontrada = alunoLogado.getListaDeMatriculasAtuais().stream()
+                                .filter(m -> m.getCursoMatriculado().getTitle().equalsIgnoreCase(tituloAtualizar))
+                                .findFirst();
+
+                        if (matriculaEncontrada.isPresent()) {
+                            System.out.print("Digite o novo percentual de conclusão (0 a 100): ");
+                            if (scanner.hasNextInt()) {
+                                int novoProgresso = scanner.nextInt();
+                                scanner.nextLine(); // limpar buffer
+
+                                try {
+                                    matriculaEncontrada.get().setProgress(novoProgresso);
+                                    System.out.println("Progresso atualizado com sucesso para " + novoProgresso + "%!");
+                                } catch (Exception e) {
+                                    System.out.println("Erro: " + e.getMessage());
+                                }
+                            } else {
+                                System.out.println("Valor inválido. Digite um número inteiro.");
+                                scanner.nextLine();
+                            }
+                        } else {
+                            System.out.println("Você não está matriculado no curso: " + tituloAtualizar);
+                        }
+                        break;
+                    }
+                    case 4: { // CANCELAR MATRÍCULA
+                        System.out.print("Digite o título do curso que deseja cancelar a matrícula: ");
+                        String tituloCancelar = scanner.nextLine();
+
+                        boolean removido = alunoLogado.getListaDeMatriculasAtuais().removeIf(
+                                m -> m.getCursoMatriculado().getTitle().equalsIgnoreCase(tituloCancelar)
+                        );
+
+                        if (removido) {
+                            System.out.println("Matrícula cancelada com sucesso. Vaga liberada no seu plano!");
+                        } else {
+                            System.out.println("Você não está matriculado no curso: " + tituloCancelar);
+                        }
+                        break;
+                    }
+                    case 5: { // ABRIR TICKET
                         System.out.print("Título do Ticket: ");
                         String titulo = scanner.nextLine();
                         System.out.print("Mensagem: ");
-                        MenuActionsList.AbrirTicket(usuarioLogado.getEmail(), titulo, scanner.nextLine());
+                        MenuActionsList.AbrirTicket(alunoLogado.getEmail(), titulo, scanner.nextLine());
                         break;
+                    }
+                    case 6: { // LISTAR CATÁLOGO
+                        System.out.println("\n--- Catálogo de Cursos ---");
+                        MenuActionsList.ListarCursos();
+                        break;
+                    }
                     default:
                         System.out.println("Opção inválida!");
                 }
@@ -157,7 +264,7 @@ public class Main {
 
         } while (true);
 
-        scanner.close();
+        // O fechamento do scanner foi movido para fora do laço para não dar erro (unreachable statement)
     }
 
     // Método auxiliar para evitar repetição de código na leitura do scanner

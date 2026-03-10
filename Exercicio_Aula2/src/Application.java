@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public class Application {
     public static void main(String[] args){
         //Criação da lista de produtos
         List<Produto> produtos = Arrays.asList(

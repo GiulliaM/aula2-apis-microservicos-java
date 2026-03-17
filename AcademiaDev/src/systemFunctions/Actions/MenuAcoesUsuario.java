@@ -69,6 +69,9 @@ public class MenuAcoesUsuario {
                 System.out.println("[3] Gerar Relatório de csv");
                 System.out.println("[4] Sair");
 
+                escolha = Integer.parseInt(scanner.nextLine());
+
+
                 menuAdmin.executarAcaoAdmin(escolha);
 
             }while(escolha != 4);

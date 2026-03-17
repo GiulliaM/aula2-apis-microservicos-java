@@ -3,7 +3,6 @@ package Users;
 import Courses.Course;
 import Courses.CourseStatus; // Importação do Enum
 import Courses.Enrollment;
-import Courses.EnrollmentException; // Importação da exceção customizada
 import Courses.SubscriptionPlan;
 
 import java.util.ArrayList;
@@ -22,17 +21,17 @@ public class Student extends User {
     public void matricular(Course cursoDesejado) {
         // Plano permite a matrícula?
         if (!this.plano.podeSeInscrever(listaDeMatriculasAtuais)) {
-            throw new EnrollmentException("O seu plano não permite mais matrículas.");
+
         }
 
         // O curso está ativo? (Comparação atualizada para usar o Enum)
         if (cursoDesejado.getStatus() != CourseStatus.ACTIVE) {
-            throw new EnrollmentException("O curso desejado não está ativo.");
+
         }
 
         // O aluno já não está matriculado nesse curso?
         if (this.listaDeMatriculasAtuais.stream().anyMatch(matricula -> matricula.getCursoMatriculado().equals(cursoDesejado))) {
-            throw new EnrollmentException("O aluno já está matriculado nesse curso.");
+
         }
 
         // Aqui passou por todas as verificações, só falta cadastrar

@@ -21,8 +21,7 @@ public class Enrollment {
         if (progress <= 100 && progress >= 0) {
             this.progress = progress;
         } else {
-            // Lançando a exceção customizada conforme o requisito
-            throw new EnrollmentException("A porcentagem de conclusão do curso nao pode ser maior do que 100 nem negativa.");
+
         }
     }
 

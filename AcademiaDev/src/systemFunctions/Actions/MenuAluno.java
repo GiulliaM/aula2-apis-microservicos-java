@@ -38,8 +38,12 @@ public class MenuAluno {
     }
 
     public void cursosDisponiveis() {
+        //mostrat cursos disponiveis para se inscrever
         System.out.println("Cursos disponíveis:");
         this.catalogoCursos.listarCursos();
+
+        
+
     }
 
     public void abrirTicketSuporte() {

@@ -9,25 +9,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
+
 public class Main {
     public static void main(String[] args) {
-        // 1. CRIANDO AS FERRAMENTAS GLOBAIS (O Palco)
+        // 1. CRIANDO AS FERRAMENTAS GLOBAIS
         Scanner scannerGlobal = new Scanner(System.in);
+
+
         Map<String, User> mapaUsuariosGlobal = new HashMap<>();
         CourseCatalog catalogoCursosGlobal = new CourseCatalog();
         FilaSupportTicket filaTicketsGlobal = new FilaSupportTicket();
 
-        // (Opcional) Se a sua classe InitialData tiver um método para carregar dados de teste,
-        // você poderia chamá-lo aqui, passando esses mapas/catálogos!
+        InitialData.carregarDados(catalogoCursosGlobal, mapaUsuariosGlobal);
 
-        // 2. INSTANCIANDO O MENU DE ENTRADA
+     
         MenuAutenticacao menuAuth = new MenuAutenticacao(scannerGlobal, mapaUsuariosGlobal);
 
         boolean sistemaRodando = true;
 
         System.out.println("Bem-vindo à plataforma AcademiaDev! 🚀");
 
-        // 3. O LOOP PRINCIPAL DO SISTEMA
+       
         while (sistemaRodando) {
             System.out.println("\n--- TELA INICIAL ---");
             System.out.println("[1] Cadastrar novo usuário");
